@@ -201,6 +201,21 @@ class Surface {
 }
 
 /**
+ * @typedef {Object} Point
+ * 
+ * @property {number} x
+ * @property {number} y
+ */
+
+/**
+ * @typedef {Object} Port
+ *
+ * @property {Point} offset
+ * @property {number} width
+ * @property {number} height
+ */
+
+/**
  * A section of an image, and its properties.
  *
  * @class
@@ -222,7 +237,7 @@ class Sprite {
         /**
          * The viewport of the image that this sprite pertains to.
          *
-         * @member {Object}
+         * @member {Port}
          */
         this.port = {
             offset: {
@@ -244,7 +259,7 @@ class Sprite {
         /**
          * The position of the centre of the sprite, as a fraction of the total dimensions.
          *
-         * @member {{{ x: number, y: number }}}
+         * @member {Point}
          */
         this.centre = {
             x: 0.0,
@@ -254,7 +269,7 @@ class Sprite {
         /**
          * The scale that the sprite should be rendered to.
          *
-         * @member {{{ x: number, y: number }}}
+         * @member {Point}
          */
         this.scale = {
             x: 1.0,
@@ -319,6 +334,114 @@ class Sprite {
 function degToRad(deg) { return deg * Math.PI / 180; }
 
 /**
+ * A camera.
+ *
+ * @class
+ * @memberof TGT
+ */
+class Camera {
+    /**
+     * @constructor
+     */
+    constructor() {
+        /**
+         * X position of the camera.
+         *
+         * @member {number}
+         */
+        this.x = 0;
+        /**
+         * Y position of the camera.
+         *
+         * @member {number}
+         */
+        this.y = 0;
+
+        /**
+         * Rotation of the camera.
+         *
+         * @member {number}
+         */
+        this.rotation = 0;
+
+        /**
+         * Zoom of the camera.
+         *
+         * @member {Point}
+         */
+        this.scale = {
+            x: 1,
+            y: 1
+        };
+
+        /**
+         * The point around which the camera rotates about and zooms onto, as a fraction of the screen.
+         *
+         * @member {Point}
+         */
+        this.focus = {
+            x: 0,
+            y: 0
+        };
+    }
+
+    /**
+     * Sets camera position.
+     *
+     * @param {number} x
+     * @param {number} y
+     */
+    setPosition(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
+     * Move camera's position.
+     *
+     * @param {number} x - Horizontal movement.
+     * @param {number} y - Vertical movement.
+     */
+    move(x, y) {
+        this.x += x;
+        this.y += y;
+    }
+
+    /**
+     * Sets camera zoom.
+     *
+     * @param {number} x - Horizontal zoom factor.
+     * @param {number} y - Vertical zoom factor.
+     */
+    setScale(x, y) {
+        this.scale.x = x;
+        this.scale.y = y;
+    }
+
+    /**
+     * Zooms camera in/out by factor.
+     *
+     * @param {number} x - Change in horizontal zoom factor.
+     * @param {number} y - Change in vertical zoom factor.
+     */
+    scaleBy(x, y) {
+        this.scale.x *= x;
+        this.scale.y *= y;
+    }
+
+    /**
+     * Sets camera's focal point.
+     *
+     * @param {number} x - X position of focus point.
+     * @param {number} y - Y position of focus point.
+     */
+    setFocus(x, y) {
+        this.focus.x = x;
+        this.focus.y = y;
+    }
+}
+
+/**
  * A class for performing rendering operations on a surface.
  *
  * @class
@@ -337,8 +460,15 @@ class Renderer {
          * @member {Surface}
          */
         this.surface = surface;
-    }
 
+        /**
+         * The renderer's camera.
+         *
+         * @member {Camera}
+         */
+        this.camera = new Camera();
+    }
+    
     /**
      * Clears all contexts to colour.
      *
@@ -358,6 +488,21 @@ class Renderer {
     }
 
     /**
+     * Transform the canvas according to the camera.
+     * 
+     * @private
+     */
+    cameraTransform(layer) {
+        let ctx = this.surface.ctx(layer);
+
+        ctx.translate(this.camera.focus.x * this.surface.width,
+                      this.camera.focus.y * this.surface.height);
+        ctx.rotate(-degToRad(this.camera.rotation));
+        ctx.scale(this.camera.scale.x, this.camera.scale.y);
+        ctx.translate(-this.camera.x, -this.camera.y);
+    }
+
+    /**
      * Renders a sprite.
      *
      * @param {Sprite} sprite - The sprite to be rendered.
@@ -373,17 +518,53 @@ class Renderer {
 
         ctx.imageSmoothingEnabled = false;
 
+        this.cameraTransform(layer);
+
         ctx.translate(x, y);
         ctx.rotate(degToRad(rotation));
 
         let rw = sprite.port.width * sprite.scale.x;
         let rh = sprite.port.height * sprite.scale.y;
+        
+        ctx.globalAlpha = sprite.opacity;
 
         ctx.drawImage(sprite._image,
                       sprite.port.offset.x, sprite.port.offset.y,
                       sprite.port.width, sprite.port.height,
                       -sprite.centre.x * rw, -sprite.centre.y * rh,
                       rw, rh);
+
+        ctx.restore();
+    }
+
+    /**
+     * Outlines a rectangle.
+     *
+     * @param {string} colour - The colour of the rectangle.
+     * @param {number} lineWidth - The width of the outline.
+     * @param {number} x - The x position of the rectangle.
+     * @param {number} y - The y position of the rectangle.
+     * @param {number} width - The width of the rectangle
+     * @param {number} height - The height of the rectangle.
+     * @param {number} centreX - The central x position on the rectangle.
+     * @param {number} centreY - The central y position on the rectangle.
+     * @param {number} rotation - The rotation of the rectangle.
+     * @param {number} layer - The layer for the rectangle to be rendered onto.
+     */
+    drawRect(colour, lineWidth, x, y, width, height, centreX, centreY, rotation, layer) {
+        let ctx = this.surface.ctx(layer);
+        
+        ctx.save();
+        
+        this.cameraTransform(layer);
+
+        ctx.translate(x, y);
+        ctx.rotate(degToRad(rotation));
+
+        ctx.strokeStyle = colour;
+        ctx.lineWidth = lineWidth;
+
+        ctx.strokeRect(-width * centreX, -height * centreY, width, height);
 
         ctx.restore();
     }
@@ -405,6 +586,8 @@ class Renderer {
         let ctx = this.surface.ctx(layer);
         
         ctx.save();
+        
+        this.cameraTransform(layer);
 
         ctx.translate(x, y);
         ctx.rotate(degToRad(rotation));
@@ -412,6 +595,35 @@ class Renderer {
         ctx.fillStyle = colour;
 
         ctx.fillRect(-width * centreX, -height * centreY, width, height);
+
+        ctx.restore();
+    }
+
+    /**
+     * Outlines an ellipse.
+     *
+     * @param {string} colour - The colour of the ellipse.
+     * @param {number} lineWidth - The width of the outline.
+     * @param {number} x - The x position of the ellipse.
+     * @param {number} y - The y position of the ellipse.
+     * @param {number} xRadius - The horizontal radius of the ellipse.
+     * @param {number} yRadius - The vertical radius of the ellipse.
+     * @param {number} rotation - The rotation of the ellipse.
+     * @param {number} layer - The layer for the ellipse to be rendered onto.
+     */
+    drawEllipse(colour, lineWidth, x, y, xRadius, yRadius, rotation, layer) {
+        let ctx = this.surface.ctx(layer);
+        
+        ctx.save();
+        
+        this.cameraTransform(layer);
+
+        ctx.strokeStyle = colour;
+        ctx.lineWidth = lineWidth;
+
+        ctx.beginPath();
+        ctx.ellipse(x, y, xRadius, yRadius, degToRad(rotation), 0, Math.PI * 2);
+        ctx.stroke();
 
         ctx.restore();
     }
@@ -431,6 +643,8 @@ class Renderer {
         let ctx = this.surface.ctx(layer);
         
         ctx.save();
+        
+        this.cameraTransform(layer);
 
         ctx.fillStyle = colour;
 
@@ -444,7 +658,8 @@ class Renderer {
     /**
      * Draws a line.
      *
-     * @param {string} colour - The colour of the line.
+     * @param {string} colour - The colour of the line.i
+     * @param {number} lineWidth - The width of the line.
      * @param {number} x1 - The x position of the beginning of the line.
      * @param {number} y1 - The y position of the beginning of the line.
      * @param {number} x2 - The x position of the end of the line.
@@ -455,6 +670,8 @@ class Renderer {
         let ctx = this.surface.ctx(layer);
 
         ctx.save();
+        
+        this.cameraTransform(layer);
 
         ctx.strokeStyle = colour;
         ctx.lineWidth = lineWidth;
@@ -468,4 +685,4 @@ class Renderer {
     }
 }
 
-export { Surface, Sprite, Renderer };
+export { Surface, Sprite, Camera, Renderer };
