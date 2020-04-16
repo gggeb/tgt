@@ -11,6 +11,7 @@ To Do
 -----
 
  + Add more rendering functions.
+ + Add camera functionality to the renderer.
  + Keypad support.
 
 Bugs
