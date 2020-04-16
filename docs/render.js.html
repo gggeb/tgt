@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>render.js</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/search.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.4.5/fuse.min.js"></script> -->
+    <script src="scripts/fuse.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+    <link type="text/css" rel="stylesheet" href="styles/clean-jsdoc-theme.css">
+    
+    
+    
+<svg aria-hidden="true" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="display:none">
+    <defs>
+        <symbol id="copy-icon" viewbox="0 0 488.3 488.3">
+            <g>
+                <path d="M314.25,85.4h-227c-21.3,0-38.6,17.3-38.6,38.6v325.7c0,21.3,17.3,38.6,38.6,38.6h227c21.3,0,38.6-17.3,38.6-38.6V124    C352.75,102.7,335.45,85.4,314.25,85.4z M325.75,449.6c0,6.4-5.2,11.6-11.6,11.6h-227c-6.4,0-11.6-5.2-11.6-11.6V124    c0-6.4,5.2-11.6,11.6-11.6h227c6.4,0,11.6,5.2,11.6,11.6V449.6z"/>
+                <path d="M401.05,0h-227c-21.3,0-38.6,17.3-38.6,38.6c0,7.5,6,13.5,13.5,13.5s13.5-6,13.5-13.5c0-6.4,5.2-11.6,11.6-11.6h227    c6.4,0,11.6,5.2,11.6,11.6v325.7c0,6.4-5.2,11.6-11.6,11.6c-7.5,0-13.5,6-13.5,13.5s6,13.5,13.5,13.5c21.3,0,38.6-17.3,38.6-38.6    V38.6C439.65,17.3,422.35,0,401.05,0z"/>
+            </g>
+        </symbol>
+    </defs>
+</svg>
+
+</head>
+<body>
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html"><div class="text">TGT</div></a></h2><div class="search-box"><input type="text" placeholder="Search..." id="search-box" /><div class="search-item-container" id="search-item-container"><ul class="search-item-ul" id="search-item-ul"></ul></div></div><div class="sidebar-list-div"><h3>Classes</h3><ul><li><a href="TGT.AssetManager.html">AssetManager</a><ul class='methods'><li data-type='method'><a href="TGT.AssetManager.html#get">get</a></li><li data-type='method'><a href="TGT.AssetManager.html#onLoad">onLoad</a></li></ul></li><li><a href="TGT.Entity.html">Entity</a><ul class='methods'><li data-type='method'><a href="TGT.Entity.html#get">get</a></li><li data-type='method'><a href="TGT.Entity.html#has">has</a></li></ul></li><li><a href="TGT.Keyboard.html">Keyboard</a><ul class='methods'><li data-type='method'><a href="TGT.Keyboard.html#onPress">onPress</a></li><li data-type='method'><a href="TGT.Keyboard.html#onRelease">onRelease</a></li></ul></li><li><a href="TGT.Mouse.html">Mouse</a><ul class='methods'><li data-type='method'><a href="TGT.Mouse.html#onClick">onClick</a></li><li data-type='method'><a href="TGT.Mouse.html#onMove">onMove</a></li><li data-type='method'><a href="TGT.Mouse.html#onRelease">onRelease</a></li></ul></li><li><a href="TGT.Renderer.html">Renderer</a><ul class='methods'><li data-type='method'><a href="TGT.Renderer.html#clear">clear</a></li><li data-type='method'><a href="TGT.Renderer.html#drawSprite">drawSprite</a></li><li data-type='method'><a href="TGT.Renderer.html#fillEllipse">fillEllipse</a></li><li data-type='method'><a href="TGT.Renderer.html#fillRect">fillRect</a></li><li data-type='method'><a href="TGT.Renderer.html#line">line</a></li></ul></li><li><a href="TGT.Scene.html">Scene</a><ul class='methods'><li data-type='method'><a href="TGT.Scene.html#addEntity">addEntity</a></li><li data-type='method'><a href="TGT.Scene.html#addSystem">addSystem</a></li><li data-type='method'><a href="TGT.Scene.html#dispatch">dispatch</a></li><li data-type='method'><a href="TGT.Scene.html#generateUID">generateUID</a></li><li data-type='method'><a href="TGT.Scene.html#getEntity">getEntity</a></li><li data-type='method'><a href="TGT.Scene.html#query">query</a></li><li data-type='method'><a href="TGT.Scene.html#removeEntity">removeEntity</a></li></ul></li><li><a href="TGT.Sprite.html">Sprite</a><ul class='methods'><li data-type='method'><a href="TGT.Sprite.html#setCentre">setCentre</a></li><li data-type='method'><a href="TGT.Sprite.html#setPort">setPort</a></li><li data-type='method'><a href="TGT.Sprite.html#setScale">setScale</a></li></ul></li><li><a href="TGT.Surface.html">Surface</a><ul class='methods'><li data-type='method'><a href="TGT.Surface.html#attachOutput">attachOutput</a></li><li data-type='method'><a href="TGT.Surface.html#ctx">ctx</a></li><li data-type='method'><a href="TGT.Surface.html#display">display</a></li><li data-type='method'><a href="TGT.Surface.html#findLargestScale">findLargestScale</a></li><li data-type='method'><a href="TGT.Surface.html#output">output</a></li><li data-type='method'><a href="TGT.Surface.html#resizeOutput">resizeOutput</a></li><li data-type='method'><a href="TGT.Surface.html#setMaxDimensions">setMaxDimensions</a></li><li data-type='method'><a href="TGT.Surface.html#shouldAutoResize">shouldAutoResize</a></li></ul></li><li><a href="TGT.System.html">System</a><ul class='methods'><li data-type='method'><a href="TGT.System.html#exit">exit</a></li><li data-type='method'><a href="TGT.System.html#init">init</a></li><li data-type='method'><a href="TGT.System.html#test">test</a></li></ul></li><li><a href="TGT.Timer.html">Timer</a><ul class='methods'><li data-type='method'><a href="TGT.Timer.html#onTick">onTick</a></li><li data-type='method'><a href="TGT.Timer.html#start">start</a></li><li data-type='method'><a href="TGT.Timer.html#stop">stop</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-TGT.html">TGT</a></li></ul><h3><a href="global.html">Global</a></h3></div>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">render.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+
+/**
+ * A layered context to be rendered to.
+ *
+ * @class
+ * @memberof TGT
+ */
+class Surface {
+    /**
+     * @constructor
+     *
+     * @param {number} width - The width of the internal canvasses.
+     * @param {number} height - The height of the internal canvasses.
+     * @param {number} nLayers - The number of layers (internal canvasses).
+     */
+    constructor(width, height, nLayers) {
+        /**
+         * The external canvas.
+         *
+         * @private
+         * @member {HTMLCanvasElement}
+         */
+        this._out = document.createElement("canvas");
+        this._out.ctx = this._out.getContext("2d");
+
+        this._out.width = width;
+        this._out.height = height;
+
+        /**
+         * The interval canvasses' width.
+         *
+         * @member {number}
+         */
+        this.width = width;
+        /**
+         * The interval canvasses' height.
+         *
+         * @member {number}
+         */
+        this.height = height;
+
+        /**
+         * The maximum width of the external canvas.
+         * If less than 1, it will be interpretted as a fraction of the viewport width.
+         *
+         * @private
+         * @member {number}
+         */
+        this._maxWidth = width;
+        /**
+         * The maximum height of the external canvas.
+         * If less than 1, it will be interpretted as a fraction of the viewport height.
+         *
+         * @private
+         * @member {number}
+         */
+        this._maxHeight = height;
+
+        /**
+         * Whether or not the external canvas should automatically resize with changes in viewport size.
+         *
+         * @private
+         * @member {boolean}
+         */
+        this._autoResize = false;
+
+        /**
+         * The number of layers.
+         *
+         * @private
+         * @member {number}
+         */
+        this._nLayers = nLayers;
+        /**
+         * The internal canvasses (layers).
+         *
+         * @private
+         * @member {HTMLCanvasElement[]}
+         */
+        this._layers = [];
+        for (let i = 0; i &lt; nLayers; i++) {
+            this._layers[i] = document.createElement("canvas");
+            this._layers[i].ctx = this._layers[i].getContext("2d");
+
+            this._layers[i].width = width;
+            this._layers[i].height = height;
+        }
+
+        /**
+         * The scale of the external canvas.
+         *
+         * @private
+         * @member {number}
+         */
+        this._scale = 1;
+        
+        window.addEventListener("resize", () => {
+            if (this._autoResize)
+                this.resizeOutput(this.findLargestScale());
+        });
+    }
+
+    /**
+     * Get the external canvas.
+     *
+     * @returns {HTMLCanvasElement}
+     */
+    output() {
+        return this._out;
+    }
+
+    /**
+     * Set whether or not the external canvas should automatically resize.
+     *
+     * @param {boolean} shouldAutoResize
+     */
+    shouldAutoResize(shouldAutoResize) {
+        this._autoResize = shouldAutoResize;
+    }
+
+    /**
+     * Set the maximum dimensions of the external canvas and resize.
+     *
+     * @param {number} width - The maximum width.
+     * @param {number} height - The maximum height.
+     */
+    setMaxDimensions(width, height) {
+        this._maxWidth = width;
+        this._maxHeight = height;
+        
+        this.resizeOutput(this.findLargestScale());
+    }
+
+    /**
+     * Find the largest scale that can be rendered to according to the maximum dimensions.
+     *
+     * @returns {number}
+     */
+    findLargestScale() {
+        let mw = window.innerWidth, mh = window.innerHeight;
+        
+        if (this._maxWidth &lt;= 1)
+            mw *= this._maxWidth;
+        else
+            mw = this._maxWidth;
+
+        if (this._maxHeight &lt;= 1)
+            mh *= this._maxHeight;
+        else
+            mh = this._maxHeight;
+
+        return Math.floor(Math.min(mw, mh) / Math.max(this.width, this.height));
+    }
+
+    /**
+     * Resize the external canvas.
+     *
+     * @param {number} scale - The scale that the external canvas should be resized to.
+     */
+    resizeOutput(scale) {
+        this._scale = scale;
+
+        this._out.width = this.width * scale;
+        this._out.height = this.height * scale;
+    }
+
+    /**
+     * Appends the external output to the given element.
+     *
+     * @param {Element} element
+     */
+    attachOutput(element) {
+        element.appendChild(this._out);
+    }
+
+    /**
+     * Returns the nth layer's rendering context.
+     *
+     * @param {number} n
+     */
+    ctx(n) {
+        return this._layers[n].ctx;
+    }
+   
+    /**
+     * Renders the internal canvasses to the external canvas, scaling if necessary.
+     */
+    display() {
+        this._out.ctx.save();
+
+        this._out.ctx.imageSmoothingEnabled = false;
+
+        this._out.ctx.scale(this._scale, this._scale);
+
+        for (let layer of this._layers)
+            this._out.ctx.drawImage(layer, 0, 0);
+
+        this._out.ctx.restore();
+    }
+}
+
+/**
+ * A section of an image, and its properties.
+ *
+ * @class
+ * @memberof TGT
+ */
+class Sprite {
+    /**
+     * @constructor
+     *
+     * @param {Image} image
+     */
+    constructor(image) {
+        /**
+         * @private
+         * @member {Image}
+         */
+        this._image = image;
+       
+        /**
+         * The viewport of the image that this sprite pertains to.
+         *
+         * @member {Object}
+         */
+        this.port = {
+            offset: {
+                x: 0,
+                y: 0
+            },
+
+            width: image.width,
+            height: image.height
+        };
+
+        /**
+         * The opacity to be rendered as.
+         *
+         * @member {number}
+         */
+        this.opacity = 1.0;
+
+        /**
+         * The position of the centre of the sprite, as a fraction of the total dimensions.
+         *
+         * @member {{{ x: number, y: number }}}
+         */
+        this.centre = {
+            x: 0.0,
+            y: 0.0,
+        };
+        
+        /**
+         * The scale that the sprite should be rendered to.
+         *
+         * @member {{{ x: number, y: number }}}
+         */
+        this.scale = {
+            x: 1.0,
+            y: 1.0
+        };
+    }
+
+    /**
+     * Sets the viewport of the sprite.
+     *
+     * @param {number} x - The viewport x offset.
+     * @param {number} y - The viewport y offset.
+     * @param {number} width - The viewport width..
+     * @param {number} height - The viewport height.
+     */
+    setPort(x, y, width, height) {
+        this.port = {
+            offset: {
+                x: x,
+                y: y
+            },
+
+            width: width,
+            height: height
+        };
+    }
+
+    /**
+     * Sets the centre of the sprite.
+     *
+     * @param {number} x
+     * @param {number} y
+     */
+    setCentre(x, y) {
+        this.centre = {
+            x: x,
+            y: y
+        };
+    }
+
+    /**
+     * Sets the scale of the sprite.
+     *
+     * @param {number} x
+     * @param {number} y
+     */
+    setScale(x, y) {
+        this.scale = {
+            x: x,
+            y: y
+        };
+    }
+}
+
+/**
+ * Converts degrees into radians.
+ *
+ * @private
+ *
+ * @param {number} deg
+ */
+function degToRad(deg) { return deg * Math.PI / 180; }
+
+/**
+ * A class for performing rendering operations on a surface.
+ *
+ * @class
+ * @memberof TGT
+ */
+class Renderer {
+    /**
+     * @constructor
+     *
+     * @param {Surface} surface - The surface to be rendered to.
+     */
+    constructor(surface) {
+        /**
+         * The surface to be rendered to.
+         *
+         * @member {Surface}
+         */
+        this.surface = surface;
+    }
+
+    /**
+     * Clears all contexts to colour.
+     *
+     * @param {string} [colour=#FFF] - Colour to cleared to, defaulting to white.
+     */
+    clear(colour = "#FFF") {
+        for (let i = 0; i &lt; this.surface._nLayers; i++)
+            this.surface.ctx(i).clearRect(0, 0, this.surface.width, this.surface.height);
+
+        this.surface.ctx(0).fillStyle = colour;
+
+        this.surface.ctx(0).fillRect(0, 0, this.surface.width, this.surface.height);
+    }
+
+    display() {
+        this.surface.display();
+    }
+
+    /**
+     * Renders a sprite.
+     *
+     * @param {Sprite} sprite - The sprite to be rendered.
+     * @param {number} x - The x position to be rendered at.
+     * @param {number} y - The y position to be rendered at.
+     * @param {number} rotation - The rotation of the sprite.
+     * @param {number} layer - The layer to be rendered onto.
+     */
+    drawSprite(sprite, x, y, rotation, layer) {
+        let ctx = this.surface.ctx(layer);
+
+        ctx.save();
+
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.translate(x, y);
+        ctx.rotate(degToRad(rotation));
+
+        let rw = sprite.port.width * sprite.scale.x;
+        let rh = sprite.port.height * sprite.scale.y;
+
+        ctx.drawImage(sprite._image,
+                      sprite.port.offset.x, sprite.port.offset.y,
+                      sprite.port.width, sprite.port.height,
+                      -sprite.centre.x * rw, -sprite.centre.y * rh,
+                      rw, rh);
+
+        ctx.restore();
+    }
+
+    /**
+     * Fills in a rectangle.
+     *
+     * @param {string} colour - The colour of the rectangle.
+     * @param {number} x - The x position of the rectangle.
+     * @param {number} y - The y position of the rectangle.
+     * @param {number} width - The width of the rectangle
+     * @param {number} height - The height of the rectangle.
+     * @param {number} centreX - The central x position on the rectangle.
+     * @param {number} centreY - The central y position on the rectangle.
+     * @param {number} rotation - The rotation of the rectangle.
+     * @param {number} layer - The layer for the rectangle to be rendered onto.
+     */
+    fillRect(colour, x, y, width, height, centreX, centreY, rotation, layer) {
+        let ctx = this.surface.ctx(layer);
+        
+        ctx.save();
+
+        ctx.translate(x, y);
+        ctx.rotate(degToRad(rotation));
+
+        ctx.fillStyle = colour;
+
+        ctx.fillRect(-width * centreX, -height * centreY, width, height);
+
+        ctx.restore();
+    }
+
+    /**
+     * Fills in an ellipse.
+     *
+     * @param {string} colour - The colour of the ellipse.
+     * @param {number} x - The x position of the ellipse.
+     * @param {number} y - The y position of the ellipse.
+     * @param {number} xRadius - The horizontal radius of the ellipse.
+     * @param {number} yRadius - The vertical radius of the ellipse.
+     * @param {number} rotation - The rotation of the ellipse.
+     * @param {number} layer - The layer for the ellipse to be rendered onto.
+     */
+    fillEllipse(colour, x, y, xRadius, yRadius, rotation, layer) {
+        let ctx = this.surface.ctx(layer);
+        
+        ctx.save();
+
+        ctx.fillStyle = colour;
+
+        ctx.beginPath();
+        ctx.ellipse(x, y, xRadius, yRadius, degToRad(rotation), 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.restore();
+    }
+
+    /**
+     * Draws a line.
+     *
+     * @param {string} colour - The colour of the line.
+     * @param {number} x1 - The x position of the beginning of the line.
+     * @param {number} y1 - The y position of the beginning of the line.
+     * @param {number} x2 - The x position of the end of the line.
+     * @param {number} y2 - The y position of the end of the line.
+     * @param {number} layer - The layer for the line to be rendered onto.
+     */
+    line(colour, lineWidth, x1, y1, x2, y2, layer) {
+        let ctx = this.surface.ctx(layer);
+
+        ctx.save();
+
+        ctx.strokeStyle = colour;
+        ctx.lineWidth = lineWidth;
+
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+}
+
+export { Surface, Sprite, Renderer };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+  
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script>
+var list = [{"title":"AssetManager","link":"<a href=\"TGT.AssetManager.html\">AssetManager</a>"},{"title":"TGT.AssetManager#get","link":"<a href=\"TGT.AssetManager.html#get\">TGT.AssetManager &rtrif; get</a>"},{"title":"TGT.AssetManager#onLoad","link":"<a href=\"TGT.AssetManager.html#onLoad\">TGT.AssetManager &rtrif; onLoad</a>"},{"title":"Entity","link":"<a href=\"TGT.Entity.html\">Entity</a>"},{"title":"TGT.Entity#get","link":"<a href=\"TGT.Entity.html#get\">TGT.Entity &rtrif; get</a>"},{"title":"TGT.Entity#has","link":"<a href=\"TGT.Entity.html#has\">TGT.Entity &rtrif; has</a>"},{"title":"Keyboard","link":"<a href=\"TGT.Keyboard.html\">Keyboard</a>"},{"title":"TGT.Keyboard#onPress","link":"<a href=\"TGT.Keyboard.html#onPress\">TGT.Keyboard &rtrif; onPress</a>"},{"title":"TGT.Keyboard#onRelease","link":"<a href=\"TGT.Keyboard.html#onRelease\">TGT.Keyboard &rtrif; onRelease</a>"},{"title":"Mouse","link":"<a href=\"TGT.Mouse.html\">Mouse</a>"},{"title":"TGT.Mouse#onClick","link":"<a href=\"TGT.Mouse.html#onClick\">TGT.Mouse &rtrif; onClick</a>"},{"title":"TGT.Mouse#onMove","link":"<a href=\"TGT.Mouse.html#onMove\">TGT.Mouse &rtrif; onMove</a>"},{"title":"TGT.Mouse#onRelease","link":"<a href=\"TGT.Mouse.html#onRelease\">TGT.Mouse &rtrif; onRelease</a>"},{"title":"Renderer","link":"<a href=\"TGT.Renderer.html\">Renderer</a>"},{"title":"TGT.Renderer#clear","link":"<a href=\"TGT.Renderer.html#clear\">TGT.Renderer &rtrif; clear</a>"},{"title":"TGT.Renderer#drawSprite","link":"<a href=\"TGT.Renderer.html#drawSprite\">TGT.Renderer &rtrif; drawSprite</a>"},{"title":"TGT.Renderer#fillEllipse","link":"<a href=\"TGT.Renderer.html#fillEllipse\">TGT.Renderer &rtrif; fillEllipse</a>"},{"title":"TGT.Renderer#fillRect","link":"<a href=\"TGT.Renderer.html#fillRect\">TGT.Renderer &rtrif; fillRect</a>"},{"title":"TGT.Renderer#line","link":"<a href=\"TGT.Renderer.html#line\">TGT.Renderer &rtrif; line</a>"},{"title":"Scene","link":"<a href=\"TGT.Scene.html\">Scene</a>"},{"title":"TGT.Scene#addEntity","link":"<a href=\"TGT.Scene.html#addEntity\">TGT.Scene &rtrif; addEntity</a>"},{"title":"TGT.Scene#addSystem","link":"<a href=\"TGT.Scene.html#addSystem\">TGT.Scene &rtrif; addSystem</a>"},{"title":"TGT.Scene#dispatch","link":"<a href=\"TGT.Scene.html#dispatch\">TGT.Scene &rtrif; dispatch</a>"},{"title":"TGT.Scene#generateUID","link":"<a href=\"TGT.Scene.html#generateUID\">TGT.Scene &rtrif; generateUID</a>"},{"title":"TGT.Scene#getEntity","link":"<a href=\"TGT.Scene.html#getEntity\">TGT.Scene &rtrif; getEntity</a>"},{"title":"TGT.Scene#query","link":"<a href=\"TGT.Scene.html#query\">TGT.Scene &rtrif; query</a>"},{"title":"TGT.Scene#removeEntity","link":"<a href=\"TGT.Scene.html#removeEntity\">TGT.Scene &rtrif; removeEntity</a>"},{"title":"Sprite","link":"<a href=\"TGT.Sprite.html\">Sprite</a>"},{"title":"TGT.Sprite#setCentre","link":"<a href=\"TGT.Sprite.html#setCentre\">TGT.Sprite &rtrif; setCentre</a>"},{"title":"TGT.Sprite#setPort","link":"<a href=\"TGT.Sprite.html#setPort\">TGT.Sprite &rtrif; setPort</a>"},{"title":"TGT.Sprite#setScale","link":"<a href=\"TGT.Sprite.html#setScale\">TGT.Sprite &rtrif; setScale</a>"},{"title":"Surface","link":"<a href=\"TGT.Surface.html\">Surface</a>"},{"title":"TGT.Surface#attachOutput","link":"<a href=\"TGT.Surface.html#attachOutput\">TGT.Surface &rtrif; attachOutput</a>"},{"title":"TGT.Surface#ctx","link":"<a href=\"TGT.Surface.html#ctx\">TGT.Surface &rtrif; ctx</a>"},{"title":"TGT.Surface#display","link":"<a href=\"TGT.Surface.html#display\">TGT.Surface &rtrif; display</a>"},{"title":"TGT.Surface#findLargestScale","link":"<a href=\"TGT.Surface.html#findLargestScale\">TGT.Surface &rtrif; findLargestScale</a>"},{"title":"TGT.Surface#output","link":"<a href=\"TGT.Surface.html#output\">TGT.Surface &rtrif; output</a>"},{"title":"TGT.Surface#resizeOutput","link":"<a href=\"TGT.Surface.html#resizeOutput\">TGT.Surface &rtrif; resizeOutput</a>"},{"title":"TGT.Surface#setMaxDimensions","link":"<a href=\"TGT.Surface.html#setMaxDimensions\">TGT.Surface &rtrif; setMaxDimensions</a>"},{"title":"TGT.Surface#shouldAutoResize","link":"<a href=\"TGT.Surface.html#shouldAutoResize\">TGT.Surface &rtrif; shouldAutoResize</a>"},{"title":"System","link":"<a href=\"TGT.System.html\">System</a>"},{"title":"TGT.System#exit","link":"<a href=\"TGT.System.html#exit\">TGT.System &rtrif; exit</a>"},{"title":"TGT.System#init","link":"<a href=\"TGT.System.html#init\">TGT.System &rtrif; init</a>"},{"title":"TGT.System#test","link":"<a href=\"TGT.System.html#test\">TGT.System &rtrif; test</a>"},{"title":"Timer","link":"<a href=\"TGT.Timer.html\">Timer</a>"},{"title":"TGT.Timer#onTick","link":"<a href=\"TGT.Timer.html#onTick\">TGT.Timer &rtrif; onTick</a>"},{"title":"TGT.Timer#start","link":"<a href=\"TGT.Timer.html#start\">TGT.Timer &rtrif; start</a>"},{"title":"TGT.Timer#stop","link":"<a href=\"TGT.Timer.html#stop\">TGT.Timer &rtrif; stop</a>"},{"title":"TGT","link":"<a href=\"module-TGT.html\">TGT</a>"}];
+setupSearch(list)
+</script>
+
+ 
+<script type="text/javascript" src="scripts/misc.js"></script>
+</body>
+</html>

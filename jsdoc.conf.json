@@ -1,0 +1,18 @@
+{
+    "source": {
+        "includePattern": ".+\\.js(doc|x)?$",
+        "include": ["."],
+        "exclude": ["node_modules"]
+    },
+
+    "opts": {
+        "destination": "./docs/",
+        "recurse": true,
+
+        "template": "node_modules/clean-jsdoc-theme",
+
+        "theme_opts": {
+            "title": "TGT"
+        }
+    }
+}

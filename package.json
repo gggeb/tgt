@@ -1,0 +1,17 @@
+{
+  "name": "tgt",
+  "version": "0.1.0",
+  "description": "tiny game toolkit",
+  "main": "src/lib.js",
+  "scripts": {
+    "lint": "eslint src/*",
+    "gendocs": "jsdoc -R README.md -c jsdoc.conf.json"
+  },
+  "author": "geb",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "clean-jsdoc-theme": "^2.2.11",
+    "eslint": "^6.8.0",
+    "jsdoc": "^3.6.4"
+  }
+}
