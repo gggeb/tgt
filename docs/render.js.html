@@ -60,6 +60,15 @@
             <pre class="prettyprint source linenums"><code>"use strict";
 
 /**
+ * Converts degrees into radians.
+ *
+ * @private
+ *
+ * @param {number} deg
+ */
+function degToRad(deg) { return deg * Math.PI / 180; }
+
+/**
  * A layered context to be rendered to.
  *
  * @class
@@ -246,16 +255,19 @@ class Surface {
      * Renders the internal canvasses to the external canvas, scaling if necessary.
      */
     display() {
-        this._out.ctx.save();
+        let ctx = this._out.ctx;
 
-        this._out.ctx.imageSmoothingEnabled = false;
+        ctx.save();
 
-        this._out.ctx.scale(this._scale, this._scale);
+        ctx.imageSmoothingEnabled = false;
 
-        for (let layer of this._layers)
-            this._out.ctx.drawImage(layer, 0, 0);
+        ctx.scale(this._scale, this._scale);
 
-        this._out.ctx.restore();
+        for (let layer of this._layers) {
+            ctx.drawImage(layer, 0, 0);
+        }
+
+        ctx.restore();
     }
 }
 
@@ -382,15 +394,6 @@ class Sprite {
         };
     }
 }
-
-/**
- * Converts degrees into radians.
- *
- * @private
- *
- * @param {number} deg
- */
-function degToRad(deg) { return deg * Math.PI / 180; }
 
 /**
  * A camera.
