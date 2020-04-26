@@ -10,6 +10,19 @@
 function degToRad(deg) { return deg * Math.PI / 180; }
 
 /**
+ * Linearly interpolate between two values.
+ *
+ * @private
+ * 
+ * @param {number} from - The start of the range.
+ * @param {number} to - The end of the range.
+ * @param {numer}  t - How far between the two points.
+ */
+function lerp(from, to, t) {
+    return from + ((to - from) * t);
+}
+
+/**
  * A layered context to be rendered to.
  *
  * @class
@@ -411,6 +424,18 @@ class Camera {
     }
 
     /**
+     * Linearly interpolate between current position and another point.
+     *
+     * @param {number} x
+     * @param {number} y
+     * @param {number} t - How far between the current position and the given point.
+     */
+    lerp(x, y, t) {
+        this.x = lerp(this.x, x, t);
+        this.y = lerp(this.y, y, t);
+    }
+
+    /**
      * Sets camera zoom.
      *
      * @param {number} x - Horizontal zoom factor.
@@ -465,11 +490,55 @@ class Renderer {
         this.surface = surface;
 
         /**
-         * The renderer's camera.
+         * Cameras available to the renderer.
          *
-         * @member {Camera}
+         * @member {Camera[]}
          */
-        this.camera = new Camera();
+        this._cameras = []
+        /**
+         * The index of the camera currently being used.
+         *
+         * @member {number}
+         */
+        this._currentCamera = -1;
+    }
+
+    /**
+     * Checks if given camera is the current camera.
+     *
+     * @param {Camera} camera
+     */
+    isCurrentCamera(camera) {
+        let i = this._cameras.indexOf(camera);
+        return i !== -1 && i == this._currentCamera;
+    }
+
+    /**
+     * Sets the camera to be used.
+     *
+     * @param {Camera} camera - The camera to be used.
+     */
+    setCurrentCamera(camera) {
+        let i = this._cameras.indexOf(camera);
+        if (i >= 0)
+            this._currentCamera = i;
+        else {
+            this._cameras.push(camera);
+            this._currentCamera = this._cameras.length - 1;
+        }
+    }
+
+    /**
+     * Stops renderer from having access to a camera.
+     *
+     * @param {Camera} camera - The camera to be removed.
+     */
+    removeCamera(camera) {
+        let i = this._cameras.indexOf(camera);
+        if (i >= 0)
+            this._cameras.splice(i, 1);
+        if (this.currentCamera === i)
+            this.currentCamera = -1;
     }
     
     /**
@@ -496,13 +565,17 @@ class Renderer {
      * @private
      */
     cameraTransform(layer) {
-        let ctx = this.surface.ctx(layer);
+        if (this._currentCamera >= 0) {
+            let camera = this._cameras[this._currentCamera];
 
-        ctx.translate(this.camera.focus.x * this.surface.width,
-                      this.camera.focus.y * this.surface.height);
-        ctx.rotate(-degToRad(this.camera.rotation));
-        ctx.scale(this.camera.scale.x, this.camera.scale.y);
-        ctx.translate(-this.camera.x, -this.camera.y);
+            let ctx = this.surface.ctx(layer);
+
+            ctx.translate(camera.focus.x * this.surface.width,
+                          camera.focus.y * this.surface.height);
+            ctx.rotate(-degToRad(camera.rotation));
+            ctx.scale(camera.scale.x, camera.scale.y);
+            ctx.translate(-camera.x, -camera.y);
+        }
     }
 
     /**

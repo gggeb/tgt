@@ -1,12 +1,9 @@
 "use strict";
 
 /**
- * A named structure for data storage.
+ * A class containing data.
  *
  * @typedef {Object} Component
- *
- * @property {string} name - The name of the component used internally.
- * @property {Object} defaults - The default properties of the component.
  */
 
 /**
@@ -45,7 +42,16 @@ class Entity {
         this._components = {};
 
         for (let component of components)
-            this._components[component.name] = Object.assign({}, component.defaults);
+            this.add(component);
+    }
+
+    /**
+     * Adds a component to the entity (doesn't update systems or scene).
+     *
+     * @param {Component} component
+     */
+    add(component) {
+        this._components[component.name] = new component();
     }
 
     /**
@@ -60,6 +66,17 @@ class Entity {
     }
 
     /**
+     * Sets data of entity's instance of a component.
+     *
+     * @param {Component} component
+     */
+    set(component, data) {
+        for (let key in data) {
+            this.get(component)[key] = data[key];
+        }
+    }
+
+    /**
      * Check if entity has all of the given components.
      *
      * @param {...Component} components
@@ -71,6 +88,18 @@ class Entity {
             if (this._components[component.name] == undefined)
                 return false;
         return true;
+    }
+
+    /**
+     * Perform a function on this entity for all relevant systems.
+     *
+     * @param {string} funcName - Name of the function to be called.
+     * @param {*} [param] - A parameter to be passed to the function.
+     */
+    dispatch(funcName, param) {
+        for (let system of this._systems)
+            if (typeof system[funcName] === "function")
+                system[funcName](this, param);
     }
 }
 
@@ -273,6 +302,25 @@ class Scene {
             if (this.getEntity(id).has(...components))
                 matches.push(this.getEntity(id));
         return matches;
+    }
+
+    /**
+     * Adds a component to an entity and updates the systems.
+     *
+     * @param {Entity} entity - The entity to be added to.
+     * @param {Component} component - The component to be added.
+     */
+    addComponentToEntity(entity, component) {
+        entity.add(component);
+        for (let system of this._systems) {
+            if (system.entities.indexOf(entity) === -1)
+                if (system.test(entity)) {
+                    system.entities.push(entity);
+                    entity._systems.push(system);
+
+                    system.init(entity);
+                }
+        }
     }
 }
 
